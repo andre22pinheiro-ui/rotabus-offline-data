@@ -32,7 +32,7 @@ OSM_TIMESTAMP="$(osmium fileinfo -g header.option.osmosis_replication_timestamp 
 echo "OSM data timestamp: $OSM_TIMESTAMP"
 
 log "Clipping to mainland Portugal ($MAINLAND_BBOX)"
-osmium extract --bbox "$MAINLAND_BBOX" --strategy smart --set-bounds \
+osmium extract --bbox="$MAINLAND_BBOX" --strategy smart --set-bounds \
   --overwrite -o mainland.osm.pbf portugal-latest.osm.pbf
 osmium fileinfo mainland.osm.pbf
 
@@ -89,7 +89,7 @@ docker run --rm --user "$UIDGID" -v "$WORK/tilemaker:/data" -w /data --entrypoin
   --output /data/portugal-map.mbtiles \
   --config /data/config-openmaptiles.json \
   --process /data/process-openmaptiles.lua \
-  --bbox "$MAINLAND_BBOX"
+  --bbox="$MAINLAND_BBOX"
 mv portugal-map.mbtiles "$WORK/package/portugal-map.mbtiles"
 cd "$WORK"
 
@@ -101,7 +101,7 @@ python3 "$ROOT/scripts/write_manifest.py" "$WORK/package" \
   --osm-timestamp "$OSM_TIMESTAMP" \
   --source-url "$GEOFABRIK_URL" \
   --source-md5 "$(cut -d' ' -f1 portugal-latest.osm.pbf.md5)" \
-  --bbox "$MAINLAND_BBOX" \
+  --bbox="$MAINLAND_BBOX" \
   --valhalla-image "$VALHALLA_DIGEST" \
   --tilemaker "${TILEMAKER_REPO}@${TILEMAKER_REF} (${TILEMAKER_COMMIT})" \
   --osmium "$(osmium --version | head -n1)"
